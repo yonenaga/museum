@@ -1,6 +1,8 @@
 <?PHP
+    require_once '../../DSN.php';
+
     if (!pg_ping()) {
-        $conn = pg_connect("host=localhost port=5432 dbname=museum user=postgres password=");
+        $conn = pg_connect("host=localhost port=5432 dbname=museum user=postgres password=" . $dsn['passwd']);
         if ($conn == FALSE) {
             echo "pg_connect error.";
             die;
