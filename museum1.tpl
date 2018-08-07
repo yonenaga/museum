@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>MUSEUM</title>
+    <title>{if $title != ""}{$title} - MUSEUM{else}MUSEUM{/if}</title>
     <link type="text/css" rel="stylesheet" href="museum.css" />
     <link rel="shortcut icon" href="../favicon.ico" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -150,7 +150,7 @@ function getyear() {
         <td>{if $row[9] eq "JAF"}<img src="./jaf.png" height=18 alt="JAF" >{elseif $row[9] eq "交通系IC"}<img src="./ic.gif" height=18 alt="IC" >{else}{$row[9]}{/if}</td>
     <td>
     	{if $row[11] eq "交通系IC"}<img src="./ic.gif" height=18 alt="IC" >
-    	{elseif $row[11] eq "VISA"}<img src="./visa.jpg" height=14 alt="VISA" >
+    	{elseif $row[11] eq "VISA"}<img src="./visa.jpg" height=12 alt="VISA" >
     	{elseif $row[11] eq "1"}<img src="./visa.jpg" height=14 alt="VISA" > <img src="./master.png" height=18 alt="MasterCard" > <img src="./jcb.gif" height=14 alt="JCB" > <img src="./ic.gif" height=18 alt="IC" >
     	{else}{$row[11]}{/if}</td>
     <td>{$row[12]}</td>

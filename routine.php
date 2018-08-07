@@ -1,4 +1,13 @@
 <?php
+    require_once '../../DSN.php';
+
+    //データベースへ接続
+    $conn = pg_connect("host=localhost port=5432 dbname=museum user=postgres password=" . $dsn['passwd']);
+    if ($conn == FALSE) {
+        echo "pg_connect error.";
+        die;
+    }
+
     function is_smartphone($ua = null) {
         if (is_null($ua)) {
             $ua = $_SERVER['HTTP_USER_AGENT'];

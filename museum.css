@@ -11,7 +11,7 @@ a:visited {color:#0000EE;}
 h1 {font-size: 20px;text-align:center;}
 /*select[name="year"] {-webkit-appearance:none; width: 100%;}*/
 @media only screen and (max-width: 600px) {
-	button {width: 40px;height: 20px;font-size: xx-small;}
+	button {width: 40px;height: 20px;font-size: x-small;}
 	select {width: 60px;height: 20px;}
 	img {vertical-align: middle;height: 12px; }
 }
@@ -22,4 +22,19 @@ h1 {font-size: 20px;text-align:center;}
 	select {width: 142px;height:26px;}
 	/*select[name="year"] {width: 142px;height:26px;}*/
 	img {vertical-align: middle;}
+}
+button {
+    display: inline-block;
+    /*padding: 0.5em 0.5em;*/
+    text-decoration: none;
+    background: #668ad8;/*ボタン色*/
+    color: #FFF;
+    border-bottom: solid 4px #627295;
+    border-radius: 3px;
+}
+button:active {/*ボタンを押したとき*/
+    -ms-transform: translateY(2px);
+    -webkit-transform: translateY(2px);
+    transform: translateY(2px);/*下に動く*/
+    border-bottom: none;/*線を消す*/
 }

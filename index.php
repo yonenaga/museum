@@ -1,15 +1,6 @@
 <?php
-    require_once '../../DSN.php';
-    require "routine.php";
-
-    //データベースへ接続
-    $conn = pg_connect("host=localhost port=5432 dbname=museum user=postgres password=" . $dsn['passwd']);
-    if ($conn == FALSE) {
-        echo "pg_connect error.";
-        die;
-    }
-
     require_once('../Smarty-3.1.32/libs/Smarty.class.php');
+    require 'routine.php';
 
     $smarty = new Smarty();
 
