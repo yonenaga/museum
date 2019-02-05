@@ -1,6 +1,7 @@
 <?php
     require_once('../Smarty-3.1.32/libs/Smarty.class.php');
     require 'routine.php';
+    define('URL', 'http://www.hojomasaki.com/museuxm/index.php');
 
     $smarty = new Smarty();
 
@@ -12,6 +13,10 @@
     $label_sp = array('福','九','中','西','海','東','関','北','V','P');
 
     $pref = array("PREF=40", "PREF>=41", "PREF>=31 AND PREF<=39", "PREF>=25 AND PREF<=30", "PREF>=15 AND PREF<=24", "PREF=13", "PREF>=8 AND PREF!=13 AND PREF<=14", "PREF>=1 AND PREF<=7");
+
+    $i = 0;
+    $labels = array();
+    $labels[$i++] = array('福岡','PREF=40');
 
     $data = array();
     $exhibit = array();
@@ -28,7 +33,7 @@
     $order = "PREF DESC, NAMEK";
     $title = "";
 
-    $year = 2018;
+    $year = 2019;
     if (isset($_POST["year"])) $year = $_POST["year"];
 
     $mode = 2;
@@ -39,7 +44,7 @@
     }
     else $mode = 2;
 
-    if (isset($_POST['fukuoka']) || isset($_GET['fukuoka'])) {
+    if (isset($_POST['fukuoka'])) {
         // $mode = 1;
         $wherestr = $pref[0];
         $title = $label[0];
@@ -143,7 +148,8 @@
     }
 
     if ($mode == 1) {
-        $sqlstr = "SELECT M.ID, NAMEJ, NAMEE, TO_CHAR(OPEN,'HH24:MI'), TO_CHAR(CLOSE,'HH24:MI'), TO_CHAR(CLOSEEX,'HH24:MI'), E.PATTERN, A.ABSENCE, URL, REDUCT, REMODEL, PAYMENT, NOTE, CHECKED, MAP, SCHEDULE FROM MUSEUM M LEFT JOIN ABSENCE A ON M.ABSENCE=A.ID LEFT JOIN EXPATTERN E ON M.EXPATTERN=E.ID  WHERE " . $wherestr . " ORDER BY " . $order;
+    	//美術館一覧
+        $sqlstr = "SELECT M.ID, NAMEJ, NAMEE, TO_CHAR(OPEN,'HH24:MI'), TO_CHAR(CLOSE,'HH24:MI'), TO_CHAR(CLOSEEX,'HH24:MI'), E.PATTERN, A.ABSENCE, URL, REDUCT, REMODEL, PAYMENT, NOTE, CHECKED, MAP, SCHEDULE, SHOP, P1.TAG, P2.TAG, P3.TAG, P4.TAG, TO_CHAR(C.START,'YYYY/MM/DD'), TO_CHAR(C.END,'YYYY/MM/DD') FROM MUSEUM M LEFT JOIN ABSENCE A ON M.ABSENCE=A.ID LEFT JOIN EXPATTERN E ON M.EXPATTERN=E.ID LEFT JOIN PAYMENT P1 ON M.PAY1=P1.ID LEFT JOIN PAYMENT P2 ON M.PAY2=P2.ID LEFT JOIN PAYMENT P3 ON M.PAY3=P3.ID LEFT JOIN PAYMENT P4 ON M.REDUCT=P4.NAME LEFT JOIN CLOSE C ON M.ID=C.ID AND C.START<=CURRENT_DATE AND C.END>=CURRENT_DATE WHERE " . $wherestr . " AND M.DISABLE=FALSE ORDER BY " . $order;
         // print_r($sqlstr);
 
         $result = pg_query($conn, $sqlstr);
@@ -157,9 +163,30 @@
 
             $i++;
         }
+        //print_r($data);
     }
     else if ($mode == 2) {
-        $select = "SELECT E.NAMEJ, M.NAMEJ, TO_CHAR(P.START, 'YYYY/MM/DD'), TO_CHAR(P.END, 'MM/DD'), ";
+    	//展覧会一覧
+        $select = "SELECT E.NAMEJ";
+        // //1
+        // if (is_smartphone() && isset($_GET['exhibition'])) {
+        //     $select .= " ''";
+        // }
+        // else {
+        //     $select .= " E.NAMEJ";
+        // }
+
+        //2
+        if (is_smartphone() && isset($_GET['museum'])) {
+            $select .= ", ''";
+        }
+        else {
+            // $select .= ", M.NAMEJ";
+            $select .= ", COALESCE(MP.NAMEJ, M.NAMEJ)";
+        }
+
+        //3,4
+        $select .= ", TO_CHAR(P.START, 'YYYY/MM/DD') AS STARTDAY, TO_CHAR(P.END, 'YYYY/MM/DD') AS ENDDAY, ";
 
         //5
         $select .= "CASE WHEN EXISTS(SELECT NULL FROM VIEW V WHERE V.EXHIBITION=P.EXHIBITION AND V.PLACE=P.PLACE) THEN ";
@@ -169,12 +196,12 @@
         $select .= "WHEN EXISTS(SELECT NULL FROM VIEW V WHERE V.EXHIBITION=P.EXHIBITION AND V.PLACE<>P.PLACE AND P.END>=CURRENT_DATE) THEN '🔶' ELSE '' END, ";
 
         //6
-        $select .= "CASE WHEN 0 <= (P.END - CURRENT_DATE) AND (P.END - CURRENT_DATE) < 7 THEN '<font color=\"red\">終了まであと' || (P.END - CURRENT_DATE + 1) || '日</font>' ";
+        $select .= "CASE WHEN 0 < (P.END - CURRENT_DATE) AND (P.END - CURRENT_DATE) < 10 THEN '<font color=\"red\">終了まであと' || (P.END - CURRENT_DATE + 1) || '日</font>' ";
         $select .= "WHEN 0 = (P.END - CURRENT_DATE) THEN '<font color=\"red\">本日最終日</font>' ";
         $select .= "WHEN P.START<=CURRENT_DATE AND P.END >= CURRENT_DATE THEN '<font color=\"red\">開催中</font>' ";
         $select .= "WHEN P.END<CURRENT_DATE THEN '<font color=\"gray\">終了</font>' ";
         $select .= "WHEN (P.START - 14) <= CURRENT_DATE THEN '<font color=\"black\">開幕まであと' || (P.START - CURRENT_DATE) || '日</font>' ";
-        $select .= "ELSE '' END, ";
+        $select .= "ELSE '' END AS A, ";
 
         $select .= "P.URL, P.EXHIBITION, P.PLACE, M.CHECKED, P.SPECIAL, ";
 
@@ -182,13 +209,18 @@
         $select .= "CASE WHEN P.START <= CURRENT_DATE THEN P.END ELSE P.START END AS SORTDAY, ";
 
         //12-18
-        $select .= "FALSE, FALSE, P.REMARKS, E.REMARKS, EP.DESCRIPTION, E.URL";
+        $select .= "E.CATALOG, FALSE, P.REMARKS, E.REMARKS, EP.DESCRIPTION, E.URL";
 
         if ($wherestr2 != "") {
-            $select .= ", TO_CHAR(VI.DAY, '<b>FMmm/DD</b>') ";
+            $select .= ", TO_CHAR(VI.DAY, '<b>FMmm/DD</b>') AS VIEWDAY";
+            // $select .= ", STRING_AGG(TO_CHAR(VI.DAY, '<b>FMmm/DD</b>'), ', ' ORDER BY VI.DAY) AS VIEWDAY";
+        }
+        else if (isset($_POST['now'])) {
+            $select .= ", VI.DAY AS VIEWDAY";
         }
         else {
-            $select .= ", TO_CHAR(VI.DAY, '<b>YY/MM/DD</b>') ";
+            //$select .= ", TO_CHAR(VI.DAY, '<b>YY/MM/DD</b>') AS VIEWDAY";
+            $select .= ", STRING_AGG(TO_CHAR(VI.DAY, '<b>YY/MM/DD</b>'), '<br>' ORDER BY VI.DAY) AS VIEWDAY";
         }
 
         //19
@@ -203,6 +235,7 @@
         $from .= "LEFT JOIN MUSEUM M ON P.PLACE=M.ID ";
         $from .= "LEFT JOIN EXPEDITION EP ON P.EXPEDITION=EP.ID ";
         $from .= "LEFT JOIN VIEW VI ON VI.EXHIBITION=P.EXHIBITION AND VI.PLACE=P.PLACE ";
+        $from .= "LEFT JOIN MUSEUM_PAST MP ON M.ID=MP.ID AND P.END<=MP.ENDDAY ";
 
         if ($wherestr2 != "") {
             $sqlstr = $select;
@@ -218,11 +251,26 @@
             $sqlstr = $select;
             $sqlstr .= $from;
             $sqlstr .= "WHERE M.ID=" . $_GET['museum'] . " ";
-            $sqlstr .= "ORDER BY P.START, P.END, VI.DAY";
+
+            $sqlstr .= "GROUP BY E.NAMEJ, M.NAMEJ, STARTDAY, ENDDAY, A, P.URL, P.EXHIBITION, P.PLACE, M.CHECKED, P.SPECIAL, SORTDAY, E.CATALOG, FALSE, P.REMARKS, E.REMARKS, EP.DESCRIPTION, E.URL, EP.ID, MP.NAMEJ ";
+
+            $sqlstr .= "UNION ALL ";
+            $sqlstr .= "SELECT '<font color=red><b>休館</b></font>'";
+            if (is_smartphone()) {
+                $sqlstr .= ", ''";
+            }
+            else {
+                // $sqlstr .= ", M.NAMEJ";
+	            $sqlstr .= ", COALESCE(MP.NAMEJ, M.NAMEJ)";
+            }
+            $sqlstr .= ", TO_CHAR(C.START, 'YYYY/MM/DD') AS STARTDAY, TO_CHAR(C.END, 'YYYY/MM/DD') AS ENDDAY,NULL,NULL,NULL,NULL,C.ID,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL AS VIEWDAY,NULL FROM CLOSE C INNER JOIN MUSEUM M ON C.ID=M.ID AND C.ID=" . $_GET['museum'] . " ";
+	        $sqlstr .= "LEFT JOIN MUSEUM_PAST MP ON M.ID=MP.ID AND C.END<=MP.ENDDAY ";
+            $sqlstr .= "ORDER BY STARTDAY, ENDDAY, VIEWDAY";
 
             $sqlstr2 = "SELECT M.NAMEJ, TO_CHAR(M.OPEN,'HH24:MI'), TO_CHAR(M.CLOSE,'HH24:MI'), A.ABSENCE, M.REDUCT, M.PAYMENT, M.NOTE, M.URL, M.NAMEE, M.SCHEDULE FROM MUSEUM M LEFT JOIN ABSENCE A ON M.ABSENCE=A.ID WHERE M.ID=" . $_GET['museum'] . " ";
 
             $result = pg_query($conn, $sqlstr2);
+            // print_r($sqlstr);
             //echo $sqlstr2;
 
             while (($row = pg_fetch_array($result, NULL, PGSQL_NUM)) != NULL) {
@@ -236,7 +284,8 @@
             $sqlstr = $select;
             $sqlstr .= $from;
             $sqlstr .= "WHERE P.EXHIBITION=" . $_GET['exhibition'] . " ";
-            $sqlstr .= "ORDER BY P.START, P.END, VI.DAY";
+            $sqlstr .= "GROUP BY E.NAMEJ, M.NAMEJ, STARTDAY, ENDDAY, A, P.URL, P.EXHIBITION, P.PLACE, M.CHECKED, P.SPECIAL, SORTDAY, E.CATALOG, FALSE, P.REMARKS, E.REMARKS, EP.DESCRIPTION, E.URL, EP.ID, MP.NAMEJ ";
+            $sqlstr .= "ORDER BY P.START, P.END, VIEWDAY";
         }
 
         if (isset($_GET['expedition'])) {
@@ -260,8 +309,14 @@
 
         if (isset($_POST['go'])) {
     	   //print $year;
-            $select = "SELECT E.NAMEJ, M.NAMEJ, TO_CHAR(P.START, 'YYYY/MM/DD'), TO_CHAR(P.END, 'MM/DD'), TO_CHAR(VI.DAY, '<b>FMmm/DD</b>'), '', P.URL, P.EXHIBITION, P.PLACE, FALSE, FALSE, '', VI.CATALOG, VI.GUIDE ";
-            $select .= ", '', '', EP.DESCRIPTION, E.URL, ''";
+            $select = "SELECT E.NAMEJ, COALESCE(MP.NAMEJ, M.NAMEJ), TO_CHAR(P.START, 'YYYY/MM/DD') AS STARTDAY, TO_CHAR(P.END, 'MM/DD') AS ENDDAY";
+            // $select .= ", TO_CHAR(VI.DAY, '<b>FMmm/DD</b>')";
+            $select .= ", '' AS F";
+            $select .= ", '', P.URL, P.EXHIBITION, P.PLACE, FALSE AS A, FALSE AS B, '' AS C, E.CATALOG, VI.GUIDE ";
+            $select .= ", '' AS D, '' AS E, EP.DESCRIPTION, E.URL";
+
+            //18
+            $select .= ", STRING_AGG(TO_CHAR(VI.DAY, '<b>FMmm/DD</b>'), '<br>' ORDER BY VI.DAY) AS VIEWDAY";
 
             //19
             $select .= ", EP.ID ";
@@ -269,12 +324,16 @@
 	        //20
             $select .= ", CASE WHEN EP.FROM<>EP.TO AND DATE_PART('MONTH',EP.FROM)<>DATE_PART('MONTH',EP.TO) THEN EP.DEST || ' ' || TO_CHAR(EP.FROM, 'FMmm/FMDD') || '～' || TO_CHAR(EP.TO, 'FMmm/FMDD') ";
             $select .= "WHEN EP.FROM<>EP.TO AND DATE_PART('MONTH',EP.FROM)=DATE_PART('MONTH',EP.TO) THEN EP.DEST || ' ' || TO_CHAR(EP.FROM, 'FMmm/FMDD') || '～' || TO_CHAR(EP.TO, 'FMDD') ";
-            $select .= "ELSE EP.DEST || ' ' || TO_CHAR(EP.FROM, 'FMmm/FMDD') END ";
+            $select .= "ELSE EP.DEST || ' ' || TO_CHAR(EP.FROM, 'FMmm/FMDD') END AS G ";
+
+            $select .= ", MIN(VI.DAY) AS SORTDAY ";
 
             $sqlstr = $select;
             $sqlstr .= $from;
             $sqlstr .= "WHERE VI.DAY>='" . $year ."-01-01' AND VI.DAY<='" . $year . "-12-31' ";
-            $sqlstr .= "ORDER BY VI.DAY, VI.ORDER";
+            $sqlstr .= "GROUP BY E.NAMEJ, M.NAMEJ, STARTDAY, ENDDAY, P.URL, P.EXHIBITION, P.PLACE, E.CATALOG, VI.GUIDE, EP.DESCRIPTION, E.URL, EP.ID, A, B, C, D, E, F, G, VI.ORDER, MP.NAMEJ ";
+            $sqlstr .= "ORDER BY SORTDAY, VI.ORDER";
+            // print_r($sqlstr);
         }
 
         if (isset($_POST['now'])) {
@@ -317,7 +376,7 @@
     // $smarty->assign('msg', $msg);
     $smarty->assign('dbver', dbversion($conn));
     $smarty->assign('is_smartphone', $is);
-    $smarty->assign('year_options', array(2018=>'2018',2017=>'2017',2016=>'2016',2015=>'2015',2014=>'2014',2013=>'2013',2009=>'2009',2006=>'2006',2005=>'2005'));
+    $smarty->assign('year_options', array(2019=>'2019',2018=>'2018',2017=>'2017',2016=>'2016',2015=>'2015',2014=>'2014',2013=>'2013',2009=>'2009',2006=>'2006',2005=>'2005'));
     //$smarty->assign('museum_options', array("PREF>=21 AND PREF<=24"=>'東海',"PREF=1"=>'北海道',"PREF>=2 AND PREF<=7"=>'東北',"PREF>=8 AND PREF!=13 AND PREF<=14"=>'関東',"PREF>=15 AND PREF<=20"=>'北陸・甲信越',"PREF>=36 AND PREF<=39"=>'四国'));
     $smarty->assign('museum_options', array("PREF=1"=>'北海道',"PREF>=2 AND PREF<=7"=>'東北',"PREF>=15 AND PREF<=20"=>'北陸・甲信越',"PREF>=36 AND PREF<=39"=>'四国'));
 

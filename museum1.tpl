@@ -64,21 +64,21 @@ function getyear() {
     <h1>{$museum[0]}</h1>
     <h3>{$museum[8]}</h3>
     <table>
-    <tr><td align=right>Webサイト</td><td><a href="{$museum[7]}" target="_new">{$museum[7]}</a></td></tr>
+    <tr><td align=right>Webサイト</td><td><a href="{$museum[7]}" target="_blank">{$museum[7]}</a></td></tr>
     <tr><td align=right>開館時間</td><td>{$museum[1]}～{$museum[2]}</td></tr>
     <tr><td align=right>休館日</td><td>{$museum[3]}</td></tr>
     <tr><td align=right>割引</td><td>
-		{if $museum[4] eq "JAF"}<img src="./jaf.png" height=18 alt="JAF" >{elseif $museum[4] eq "交通系IC"}<img src="./ic.gif" height=18 alt="IC" >{else}{$museum[4]}{/if}
+		{if $museum[4] eq "JAF"}<img src="./jaf.png" height=14 alt="JAF" >{elseif $museum[4] eq "交通系IC"}<img src="./ic.gif" height=16 alt="IC" >{else}{$museum[4]}{/if}
 		</td></tr>
     <tr><td align=right>支払</td><td>
     {if $museum[5] != null}
-    	{if $museum[5] eq "交通系IC"}<img src="./ic.gif" height=18 alt="IC" >
+    	{if $museum[5] eq "交通系IC"}<img src="./ic.gif" height=16 alt="IC" >
     	{elseif $museum[5] eq "VISA"}<img src="./visa.jpg" height=14 alt="VISA" >
-    	{elseif $museum[5] eq "1"}<img src="./visa.jpg" height=14 alt="VISA" > <img src="./master.png" height=18 alt="MasterCard" > <img src="./jcb.gif" height=14 alt="JCB" > <img src="./ic.gif" height=18 alt="IC" >
+    	{elseif $museum[5] eq "1"}<img src="./visa.jpg" height=14 alt="VISA" > <img src="./master.png" height=16 alt="MasterCard" > <img src="./jcb.gif" height=14 alt="JCB" > <img src="./ic.gif" height=16 alt="IC" >
     	{else}{$museum[5]}{/if}
 	{/if}
 	</td></tr>
-    <tr><td align=right>年間スケジュール</td><td><a href="{$museum[9]}" target="_new">{$museum[9]}</a></td></tr>
+    <tr><td align=right>年間スケジュール</td><td><a href="{$museum[9]}" target="_blank">{$museum[9]}</a></td></tr>
     <tr><td align=right>備考</td><td>{$museum[6]}</td></tr>
     </table>
     <br>
@@ -109,18 +109,18 @@ function getyear() {
     <td align="right">{$smarty.foreach.loop.iteration}</td>
     <!--<td>{if $row2[10] eq t}☆{/if}</td>-->
     <td align="right">{$row2[18]}</td>
-    <td align="right">{if $row2[4] neq ""}{$row2[4]}{else}{if $row2[10] eq t}🔵️{/if}{/if}</td>
-    <td><a href="https://www.hojomasaki.com/museuxm/index.php?exhibition={$row2[7]}">{$row2[0]}</a> {if $row2[12] eq t}📕{/if} {if $row2[13] eq t}🎧{/if}</td>
-    <td><a href="https://www.hojomasaki.com/museuxm/index.php?museum={$row2[8]}">{$row2[1]}</a></td>
+    <td align="left">{if $row2[4] neq ""}{$row2[4]}{else}{if $row2[10] eq t}🔵️{/if}{/if}</td>
+    <td><a href='{$smarty.const.URL}?exhibition={$row2[7]}'>{$row2[0]}</a> {if $row2[12] eq t}📕{/if} {if $row2[13] eq t}🎧{/if}</td>
+    <td><a href="{$smarty.const.URL}?museum={$row2[8]}">{$row2[1]}</a></td>
     <td>{if $row2[9] eq t}✅{/if}</td>
     <td>{$row2[2]}〜{$row2[3]}</td>
     <!--<td><b>{$row2[4]}</b></td>-->
     <td><b>{$row2[5]} {$row2[15]} {$row2[14]}</b>
-    	{if $row2[16] neq null}<a href="https://www.hojomasaki.com/museuxm/index.php?expedition={$row2[19]}"><b>
+    	{if $row2[16] neq null}<a href="{$smarty.const.URL}?expedition={$row2[19]}"><b>
         {if $row2[20] neq null}{$row2[20]}{else}{$row2[16]}{/if}</b></a>{/if}
     </td>
-    <td>{if $row2[17] neq null}<a href="{$row2[17]}" target="new">HP</a>{/if}</td>
-    <td>{if $row2[6] neq null}<a href="{$row2[6]}" target="new">HP</a>{/if}</td>
+    <td>{if $row2[17] neq null}<a href="{$row2[17]}" target="_blank">HP</a>{/if}</td>
+    <td>{if $row2[6] neq null}<a href="{$row2[6]}" target="_blank">HP</a>{/if}</td>
     <td align="right">{$row2[7]}</td><td align="right">{$row2[8]}</td>
     </tr>
     {/if}
@@ -134,10 +134,13 @@ function getyear() {
     {if $row != null}
     <tr bgcolor="{cycle values="#FFF0F5,#F0FFFF"}"><!-- ,#FFFFCC -->
     <td align="right">{$smarty.foreach.loop.iteration}</td>
-    <td><a href="https://www.hojomasaki.com/museuxm/index.php?museum={$row[0]}">{$row[1]} <!-- <font color="blue">{$row[2]}</font> --></a></td>
-    {if $row[10] neq null}
+    <td><a href="{$smarty.const.URL}?museum={$row[0]}">{$row[1]} <!-- <font color="blue">{$row[2]}</font> --></a></td>
+    {if $row[21] neq null}
         <td></td>
-        <td colspan=5><font color="red">{$row[10]}</font></td>
+        <td colspan=7><b><font color="red">休館中 ({$row[21]}～{$row[22]})</font></b></td>
+    {else if $row[10] neq null}
+        <td></td>
+        <td colspan=7><font color="red">{$row[10]}</font></td>
     {else}
         <td>{if $row[13] eq t}✅{/if}</td>
         <td>{$row[3]}〜{$row[4]}
@@ -147,18 +150,30 @@ function getyear() {
         </td>
         <td>{$row[7]}</td>
         <!-- <td>{$row[9]}</td> -->
-        <td>{if $row[9] eq "JAF"}<img src="./jaf.png" height=18 alt="JAF" >{elseif $row[9] eq "交通系IC"}<img src="./ic.gif" height=18 alt="IC" >{else}{$row[9]}{/if}</td>
-    <td>
-    	{if $row[11] eq "交通系IC"}<img src="./ic.gif" height=18 alt="IC" >
+<!--        <td>{if $row[9] eq "JAF"}<img src="./jaf.png" height=18 alt="JAF" >{elseif $row[9] eq "交通系IC"}<img src="./ic.gif" height=16 alt="IC" >{else}{$row[9]}{/if}</td>
+     <td>
+    	{* {if $row[11] eq "交通系IC"}<img src="./ic.gif" height=16 alt="IC" >
     	{elseif $row[11] eq "VISA"}<img src="./visa.jpg" height=12 alt="VISA" >
-    	{elseif $row[11] eq "1"}<img src="./visa.jpg" height=14 alt="VISA" > <img src="./master.png" height=18 alt="MasterCard" > <img src="./jcb.gif" height=14 alt="JCB" > <img src="./ic.gif" height=18 alt="IC" >
-    	{else}{$row[11]}{/if}</td>
-    <td>{$row[12]}</td>
+    	{elseif $row[11] eq "1"}<img src="./visa.jpg" height=12 alt="VISA" > <img src="./master.png" height=16 alt="MasterCard" > <img src="./jcb.gif" height=14 alt="JCB" > <img src="./ic.gif" height=16 alt="IC" >
+    	{else}{$row[11]}{/if} *}
+    </td>
+    <td>
+        {if $row[16] eq "交通系IC"}<img src="./ic.gif" height=16 alt="IC" >
+        {elseif $row[16] eq "VISA"}<img src="./visa.jpg" height=12 alt="VISA" >
+        {elseif $row[16] eq "1"}<img src="./visa.jpg" height=12 alt="VISA" > <img src="./master.png" height=16 alt="MasterCard" > <img src="./jcb.gif" height=14 alt="JCB" > <img src="./ic.gif" height=16 alt="IC" >
+        {else}{$row[16]}{/if}
+    </td>
+ -->
+ 	    <td>{$row[20]}</td>
+ 	    <td>{$row[17]}</td>
+	    <td>{$row[18]}</td>
+	    <td>{$row[19]}</td>
+        <td>{$row[12]}</td>
     {/if}
     <td>{if $row[8] neq null}<a href="{$row[8]}" target="_blank"><font color="blue">HP</font>{/if}</td>
-    <!-- <td>{if $is_smartphone eq t} <a href="comgooglemaps://?q={$row[1]}">MAP</a>{else} <a href="http://www.google.co.jp/maps?q={$row[1]}" target="_new">MAP</a>{/if}</td> -->
+    <!-- <td>{if $is_smartphone eq t} <a href="comgooglemaps://?q={$row[1]}">MAP</a>{else} <a href="http://www.google.co.jp/maps?q={$row[1]}" target="_blank">MAP</a>{/if}</td> -->
     <td>{if $row[15] neq null}<a href="{$row[15]}" target="_blank"><font color="green">SCH</font>{/if}</td>
-    <td>{if $row[14] neq null}<a href="{$row[14]}" target="_new">MAP</a>{/if}</td>
+    <td>{if $row[14] neq null}<a href="{$row[14]}" target="_blank">MAP</a>{/if}</td>
     <td align="right">{$row[0]}</td>
     </tr>
     {/if}{/foreach}

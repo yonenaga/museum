@@ -1,5 +1,5 @@
 * {
-    font-size:x-small;
+    /*font-size:x-small;*/
     font-family:'Lucida Grande', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
 }
 /*input[type="submit"] {width: 50px; height: 30px;}*/
@@ -11,11 +11,13 @@ a:visited {color:#0000EE;}
 h1 {font-size: 20px;text-align:center;}
 /*select[name="year"] {-webkit-appearance:none; width: 100%;}*/
 @media only screen and (max-width: 600px) {
+	* {font-size: x-small;} 
 	button {width: 40px;height: 20px;font-size: x-small;}
 	select {width: 60px;height: 20px;}
 	img {vertical-align: middle;height: 12px; }
 }
 @media only screen and (min-width: 601px) {
+	* {font-size: small;} 
 	/*button {width: 70px;height: 26px;}*/
 	button {width: 90px;height: 26px; font-size:xx-small;}
 	/*button {width: 70px;height: 26px;font-size: xx-small;}*/
@@ -38,3 +40,4 @@ button:active {/*ボタンを押したとき*/
     transform: translateY(2px);/*下に動く*/
     border-bottom: none;/*線を消す*/
 }
+/*tr {height: 18px; }*/

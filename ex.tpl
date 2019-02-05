@@ -20,7 +20,7 @@
     {if $row != null}
     <tr bgcolor="{cycle values="#FFF0F5,#F0FFFF"}">
     <td align="right">{$row[0]}</td>
-    <td><a href="http://www.hojomasaki.com/museuxm/index.php?exhibition={$row[0]}">{$row[1]}</td>
+    <td><a href="{$smarty.const.URL}?exhibition={$row[0]}">{$row[1]}  {if $row[5] eq t}📕{/if}</td>
     <!--td><a href="http://www.google.co.jp/?q={$row[1]}">Google</a></td-->
     <td align="right">{if $row[4] neq null}<a href="{$row[4]}" target="_blank">HP</a>{/if}</td>
     <td align="right">{$row[2]}</td>

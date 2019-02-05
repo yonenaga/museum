@@ -1,6 +1,7 @@
 <?PHP
     require_once('../Smarty-3.1.30/libs/Smarty.class.php');
     require 'routine.php';
+    define('URL', 'http://www.hojomasaki.com/museuxm/index.php');
 
     $smarty = new Smarty();
 
@@ -8,7 +9,7 @@
     $smarty->compile_dir = './smarty';
     $smarty->cache_dir = './smarty';
 
-    $sqlstr = "SELECT ID, NAMEJ, TO_CHAR(MIN(P.START),'YYYY/MM/DD') AS STAD, TO_CHAR(MAX(P.END),'YYYY/MM/DD') AS ENDD, E.URL FROM EXHIBITION E INNER JOIN PERIOD P ON E.ID=P.EXHIBITION ";
+    $sqlstr = "SELECT ID, NAMEJ, TO_CHAR(MIN(P.START),'YYYY/MM/DD') AS STAD, TO_CHAR(MAX(P.END),'YYYY/MM/DD') AS ENDD, E.URL, E.CATALOG FROM EXHIBITION E INNER JOIN PERIOD P ON E.ID=P.EXHIBITION ";
 
     if (isset($_POST['keyword'])) {
         $input = $_POST['searchstr'];
