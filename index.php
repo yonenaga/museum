@@ -1,22 +1,26 @@
 <?php
     require_once('../Smarty-3.1.32/libs/Smarty.class.php');
     require 'routine.php';
-    define('URL', 'http://www.hojomasaki.com/museuxm/index.php');
+    // define('URL', 'http://www.hojomasaki.com/museuxm/index.php');
 
     $smarty = new Smarty();
 
     $smarty->template_dir = '.';
     $smarty->compile_dir = './smarty';
     $smarty->cache_dir = './smarty';
+    $smarty->error_reporting = E_ALL & ~E_NOTICE;
 
-    $label = array('福岡','九州','中国・四国','関西','東海・中部','東京','関東','北海道・東北','VIEW','PLAN');
-    $label_sp = array('福','九','中','西','海','東','関','北','V','P');
+    // $label = array('福岡','九州','中国・四国','関西','東海・中部','東京','関東','北海道・東北','VIEW','PLAN');
+    // $label_sp = array('福','九','中','西','海','東','関','北','V','P');
 
-    $pref = array("PREF=40", "PREF>=41", "PREF>=31 AND PREF<=39", "PREF>=25 AND PREF<=30", "PREF>=15 AND PREF<=24", "PREF=13", "PREF>=8 AND PREF!=13 AND PREF<=14", "PREF>=1 AND PREF<=7");
+    // $pref = array("PREF=40", "PREF>=41", "PREF>=31 AND PREF<=39", "PREF>=25 AND PREF<=30", "PREF>=15 AND PREF<=24", "PREF=13", "PREF>=8 AND PREF!=13 AND PREF<=14", "PREF>=1 AND PREF<=7");
+    $label = array('福岡','九州','中国','四国','関西','東海','北陸','甲信越','東京','多摩','関東','東北','北海道');
+    // $label_sp = array('福','九','中','西','海','東','関','北','V','P');
+    $pref = array("40", "41,42,43,44,45,46,47", "31,32,33,34,35", "36,37,38,39", "25,26,27,28,29,30", "21,22,23,24", "16,17,18", "15,19,20", "13", "48", "8,9,10,11,12,14", "2,3,4,5,6,7", "1");
 
-    $i = 0;
-    $labels = array();
-    $labels[$i++] = array('福岡','PREF=40');
+    // $i = 0;
+    // $labels = array();
+    // $labels[$i++] = array('福岡','PREF=40');
 
     $data = array();
     $exhibit = array();
@@ -34,124 +38,140 @@
     $title = "";
 
     $year = 2019;
-    if (isset($_POST["year"])) $year = $_POST["year"];
+    // if (isset($_POST["year"])) $year = $_POST["year"];
+    if (isset($_GET["year"])) $year = $_GET["year"];
 
     $mode = 2;
+
     // $select = 0;
 
-    if (isset($_POST['fukuoka']) || isset($_POST['kyushu']) || isset($_POST['chugoku']) || isset($_POST['kansai']) || isset($_POST['tokai']) || isset($_POST['tokyo']) || isset($_POST['kanto']) || isset($_POST['tohoku'])) {
-        $mode = 1;
-    }
-    else $mode = 2;
+    // if (isset($_POST['fukuoka']) || isset($_POST['kyushu']) || isset($_POST['chugoku']) || isset($_POST['kansai']) || isset($_POST['tokai']) || isset($_POST['tokyo']) || isset($_POST['kanto']) || isset($_POST['tohoku'])) {
+    //     $mode = 1;
+    // }
+    // else $mode = 2;
 
-    if (isset($_POST['fukuoka'])) {
-        // $mode = 1;
-        $wherestr = $pref[0];
-        $title = $label[0];
-        // $select = 0;
+   //  if (isset($_POST['fukuoka'])) {
+   //      // $mode = 1;
+   //      $wherestr = $pref[0];
+   //      $title = $label[0];
+   //      // $select = 0;
+   //  }
+   //  else if (isset($_POST['kyushu'])) {
+   //      // $mode = 1;
+   //      $wherestr = $pref[1];
+   //      $order = "PREF, NAMEK"; 
+   //      $title = $label[1]; 
+   //      // $select = 1;
+   //  }
+   //  else if (isset($_POST['chugoku'])) { 
+   //      // $mode = 1;
+   //      $wherestr = $pref[2];
+   //      $order = "PREF, NAMEK"; 
+   //      $title = $label[2]; 
+   //      // $select = 2;
+   //  }
+   //  else if (isset($_POST['kansai'])) {
+   //      // $mode = 1;
+   //      $wherestr = $pref[3];
+   //      $order = "PREF, NAMEK";
+   //      $title = $label[3];
+   //      // $select = 3;
+   //  }
+   //  else if (isset($_POST['tokai'])) {
+   //      // $mode = 1;
+   //      $wherestr = $pref[4];
+   //      $title = $label[4];
+   //      // $select = 4;
+   // }
+   //  else if (isset($_POST['tokyo'])) {
+   //      // $mode = 1;
+   //      $wherestr = $pref[5];
+   //      $title = $label[5];
+   //      // $select = 5;
+   //  }
+   //  else if (isset($_POST['kanto'])) {
+   //      // $mode = 1;
+   //      $wherestr = $pref[6];
+   //      $title = $label[6];
+   //      // $select = 6;
+   //  }
+   //  else if (isset($_POST['tohoku'])) {
+   //      // $mode = 1;
+   //      $wherestr = $pref[7];
+   //      $title = $label[7];
+   //      // $select = 7;
+   //  }
+   //  //else if (isset($_POST['hokkaido'])) $wherestr = "PREF=1";
+   //  else if (isset($_POST['fukuoka2'])) {
+   //      $wherestr2 = $pref[0];
+   //      $title = $label[0];
+   //      // $mode = 2;
+   //  }
+   //  else if (isset($_POST['kyushu2'])) {
+   //      $wherestr2 = $pref[1];
+   //      $title = $label[1];
+   //      // $mode = 2;
+   //  }
+   //  else if (isset($_POST['chugoku2'])) {
+   //      $wherestr2 = $pref[2];
+   //      $title = $label[2];
+   //      // $mode = 2;
+   //  }
+   //  //else if (isset($_POST['shikoku2'])) $wherestr2 = "PREF>=36 AND PREF<=39";
+   //  else if (isset($_POST['kansai2'])) {
+   //      $wherestr2 = $pref[3];
+   //      $title = $label[3];
+   //      // $mode = 2;
+   //  }
+   //  else if (isset($_POST['tokai2'])) {
+   //      $wherestr2 = $pref[4];
+   //      $title = $label[4];
+   //      // $mode = 2;
+   //  }
+   //  else if (isset($_POST['tokyo2'])) {
+   //      $wherestr2 = $pref[5];
+   //      $title = $label[5];
+   //      // $mode = 2;
+   //  }
+   //  else if (isset($_POST['kanto2'])) {
+   //      $wherestr2 = $pref[6];
+   //      $title = $label[6];
+   //      // $mode = 2;
+   //  }
+   //  else if (isset($_POST['tohoku2'])) {
+   //      $wherestr2 = $pref[7];
+   //      $title = $label[7];
+   //      // $mode = 2;
+   //  }
+   //  //else if (isset($_POST['hokkaido2'])) $wherestr2 = "PREF=1";
+   //  else if (isset($_POST['now'])) {
+   //      $title = "PLAN";
+   //      // $mode = 2;
+   //  }
+   //  if (isset($_POST['go'])) {
+   //      $title = $year;
+   //      // $mode = 2;
+   //  }
+
+    if (isset($_GET['mode'])) $mode = $_GET['mode'];
+    if (isset($_GET['title'])) $title = $_GET['title'];
+
+    if (isset($_GET['pref'])) {
+    	$wherestr = "PREF IN (" . $_GET['pref'] .")";
+    	// $title = $_GET['title'];
+    	$order = "PREF, NAMEK";
     }
-    else if (isset($_POST['kyushu'])) {
-        // $mode = 1;
-        $wherestr = $pref[1];
-        $order = "PREF, NAMEK"; 
-        $title = $label[1]; 
-        // $select = 1;
-    }
-    else if (isset($_POST['chugoku'])) { 
-        // $mode = 1;
-        $wherestr = $pref[2];
-        $order = "PREF, NAMEK"; 
-        $title = $label[2]; 
-        // $select = 2;
-    }
-    else if (isset($_POST['kansai'])) {
-        // $mode = 1;
-        $wherestr = $pref[3];
-        $order = "PREF, NAMEK";
-        $title = $label[3];
-        // $select = 3;
-    }
-    else if (isset($_POST['tokai'])) {
-        // $mode = 1;
-        $wherestr = $pref[4];
-        $title = $label[4];
-        // $select = 4;
-   }
-    else if (isset($_POST['tokyo'])) {
-        // $mode = 1;
-        $wherestr = $pref[5];
-        $title = $label[5];
-        // $select = 5;
-    }
-    else if (isset($_POST['kanto'])) {
-        // $mode = 1;
-        $wherestr = $pref[6];
-        $title = $label[6];
-        // $select = 6;
-    }
-    else if (isset($_POST['tohoku'])) {
-        // $mode = 1;
-        $wherestr = $pref[7];
-        $title = $label[7];
-        // $select = 7;
-    }
-    //else if (isset($_POST['hokkaido'])) $wherestr = "PREF=1";
-    else if (isset($_POST['fukuoka2'])) {
-        $wherestr2 = $pref[0];
-        $title = $label[0];
-        // $mode = 2;
-    }
-    else if (isset($_POST['kyushu2'])) {
-        $wherestr2 = $pref[1];
-        $title = $label[1];
-        // $mode = 2;
-    }
-    else if (isset($_POST['chugoku2'])) {
-        $wherestr2 = $pref[2];
-        $title = $label[2];
-        // $mode = 2;
-    }
-    //else if (isset($_POST['shikoku2'])) $wherestr2 = "PREF>=36 AND PREF<=39";
-    else if (isset($_POST['kansai2'])) {
-        $wherestr2 = $pref[3];
-        $title = $label[3];
-        // $mode = 2;
-    }
-    else if (isset($_POST['tokai2'])) {
-        $wherestr2 = $pref[4];
-        $title = $label[4];
-        // $mode = 2;
-    }
-    else if (isset($_POST['tokyo2'])) {
-        $wherestr2 = $pref[5];
-        $title = $label[5];
-        // $mode = 2;
-    }
-    else if (isset($_POST['kanto2'])) {
-        $wherestr2 = $pref[6];
-        $title = $label[6];
-        // $mode = 2;
-    }
-    else if (isset($_POST['tohoku2'])) {
-        $wherestr2 = $pref[7];
-        $title = $label[7];
-        // $mode = 2;
-    }
-    //else if (isset($_POST['hokkaido2'])) $wherestr2 = "PREF=1";
-    else if (isset($_POST['now'])) {
-        $title = "PLAN";
-        // $mode = 2;
-    }
-    if (isset($_POST['go'])) {
-        $title = $year;
-        // $mode = 2;
-    }
+	    // print_r($wherestr);
 
     if ($mode == 1) {
+	    // print_r($wherestr);
+
     	//美術館一覧
         $sqlstr = "SELECT M.ID, NAMEJ, NAMEE, TO_CHAR(OPEN,'HH24:MI'), TO_CHAR(CLOSE,'HH24:MI'), TO_CHAR(CLOSEEX,'HH24:MI'), E.PATTERN, A.ABSENCE, URL, REDUCT, REMODEL, PAYMENT, NOTE, CHECKED, MAP, SCHEDULE, SHOP, P1.TAG, P2.TAG, P3.TAG, P4.TAG, TO_CHAR(C.START,'YYYY/MM/DD'), TO_CHAR(C.END,'YYYY/MM/DD') FROM MUSEUM M LEFT JOIN ABSENCE A ON M.ABSENCE=A.ID LEFT JOIN EXPATTERN E ON M.EXPATTERN=E.ID LEFT JOIN PAYMENT P1 ON M.PAY1=P1.ID LEFT JOIN PAYMENT P2 ON M.PAY2=P2.ID LEFT JOIN PAYMENT P3 ON M.PAY3=P3.ID LEFT JOIN PAYMENT P4 ON M.REDUCT=P4.NAME LEFT JOIN CLOSE C ON M.ID=C.ID AND C.START<=CURRENT_DATE AND C.END>=CURRENT_DATE WHERE " . $wherestr . " AND M.DISABLE=FALSE ORDER BY " . $order;
-        // print_r($sqlstr);
 
+        print_r("<!--");
+        print_r($sqlstr);
+        print_r("-->");
         $result = pg_query($conn, $sqlstr);
         //print_r($result);
 
@@ -237,14 +257,18 @@
         $from .= "LEFT JOIN VIEW VI ON VI.EXHIBITION=P.EXHIBITION AND VI.PLACE=P.PLACE ";
         $from .= "LEFT JOIN MUSEUM_PAST MP ON M.ID=MP.ID AND P.END<=MP.ENDDAY ";
 
-        if ($wherestr2 != "") {
+        $groupby = "GROUP BY E.NAMEJ, M.NAMEJ, STARTDAY, ENDDAY, A, P.URL, P.EXHIBITION, P.PLACE, M.CHECKED, P.SPECIAL, SORTDAY, E.CATALOG, FALSE, P.REMARKS, E.REMARKS, EP.DESCRIPTION, E.URL, EP.ID, MP.NAMEJ, E.ID, VI.DAY ";
+
+        // if ($wherestr2 != "") {
             $sqlstr = $select;
             $sqlstr .= $from;
-            $sqlstr .= "WHERE " . $wherestr2 . " ";
+            // $sqlstr .= "WHERE " . $wherestr2 . " ";
+            $sqlstr .= "WHERE " . $wherestr . " ";
             $sqlstr .= "AND P.END>=CURRENT_DATE ";
+            $sqlstr .= $groupby;
             $sqlstr .= "ORDER BY P.START, P.END, E.ID, VI.DAY";
             //$sqlstr .= "ORDER BY SORTDAY";
-        }
+        // }
 
         if (isset($_GET['museum'])) {
         	$museum = array();
@@ -269,9 +293,10 @@
 
             $sqlstr2 = "SELECT M.NAMEJ, TO_CHAR(M.OPEN,'HH24:MI'), TO_CHAR(M.CLOSE,'HH24:MI'), A.ABSENCE, M.REDUCT, M.PAYMENT, M.NOTE, M.URL, M.NAMEE, M.SCHEDULE FROM MUSEUM M LEFT JOIN ABSENCE A ON M.ABSENCE=A.ID WHERE M.ID=" . $_GET['museum'] . " ";
 
+	        print_r("<!--");
+    	    print_r($sqlstr2);
+        	print_r("-->");
             $result = pg_query($conn, $sqlstr2);
-            // print_r($sqlstr);
-            //echo $sqlstr2;
 
             while (($row = pg_fetch_array($result, NULL, PGSQL_NUM)) != NULL) {
                 for ($j = 0, $k = 0; $j < count($row); $j++, $k++) {
@@ -307,7 +332,8 @@
             }
         }
 
-        if (isset($_POST['go'])) {
+        // if (isset($_POST['go'])) {
+        if (isset($_GET['year'])) {
     	   //print $year;
             $select = "SELECT E.NAMEJ, COALESCE(MP.NAMEJ, M.NAMEJ), TO_CHAR(P.START, 'YYYY/MM/DD') AS STARTDAY, TO_CHAR(P.END, 'MM/DD') AS ENDDAY";
             // $select .= ", TO_CHAR(VI.DAY, '<b>FMmm/DD</b>')";
@@ -336,7 +362,8 @@
             // print_r($sqlstr);
         }
 
-        if (isset($_POST['now'])) {
+        // if (isset($_POST['now'])) {
+        if (isset($_GET['plan'])) {
             $sqlstr = $select;
             $sqlstr .= $from;
             $sqlstr .= "WHERE P.END>=CURRENT_DATE ";
@@ -344,12 +371,15 @@
             $sqlstr .= "AND P.SPECIAL=TRUE ";
             $sqlstr .= "AND NOT EXISTS (SELECT NULL FROM VIEW V WHERE P.EXHIBITION=V.EXHIBITION AND P.PLACE=V.PLACE) ";
             //$sqlstr .= "ORDER BY M.PREF DESC, P.END";
+            $sqlstr .= $groupby;
             $sqlstr .= "ORDER BY P.START, P.END, E.ID, VI.DAY";
             //error_log(print_r($sqlstr), "3", "D:/WORK/error.log");
         }
 
         // error_log(print_r($sqlstr));
-        // print_r($sqlstr);
+        print_r("<!--");
+        print_r($sqlstr);
+        print_r("-->");
         $result = pg_query($conn, $sqlstr);
        	//error_log(print_r($result));
 
@@ -366,6 +396,7 @@
 	    }
 	    //print_r($exhibit);
     }
+    else print_r($mode);
 
     $is = is_smartphone();
 
@@ -380,12 +411,13 @@
     //$smarty->assign('museum_options', array("PREF>=21 AND PREF<=24"=>'東海',"PREF=1"=>'北海道',"PREF>=2 AND PREF<=7"=>'東北',"PREF>=8 AND PREF!=13 AND PREF<=14"=>'関東',"PREF>=15 AND PREF<=20"=>'北陸・甲信越',"PREF>=36 AND PREF<=39"=>'四国'));
     $smarty->assign('museum_options', array("PREF=1"=>'北海道',"PREF>=2 AND PREF<=7"=>'東北',"PREF>=15 AND PREF<=20"=>'北陸・甲信越',"PREF>=36 AND PREF<=39"=>'四国'));
 
-    if ($is) {
-	    $smarty->assign('label', $label_sp);
-	}
-	else {
-	    $smarty->assign('label', $label);
-	}
+ 	// if ($is) {
+	//     $smarty->assign('label', $label_sp);
+	// }
+	// else {
+		$smarty->assign('label', $label);
+	// }
+	$smarty->assign('pref', $pref);
 
     if (isset($_GET['exhibition'])) {
         $title = $exhibit[0][0];

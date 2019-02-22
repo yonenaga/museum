@@ -26,38 +26,28 @@ function getyear() {
 </head>
 <body>
 <div align=center>
-    <form action="./index.php" method="post" class="museum" name="museum" id="museum" enctype="multipart/form-data">
-        <table><tr>
-        <td><button id="fukuoka" name="fukuoka" />{$label[0]}</button></td>
-        <td><button id="kyushu" name="kyushu" />{$label[1]}</button></td>
-        <td><button name="chugoku" />{$label[2]}</button></td>
-        <td><button name="kansai" />{$label[3]}</button></td>
-        <td><button name="tokai" />{$label[4]}</button></td>
-        <td><button name="tokyo" />{$label[5]}</button></td>
-        <td><button name="kanto" />{$label[6]}</button></td>
-        <td><button name="tohoku" />{$label[7]}</button></td>
+     <!-- <table style="border-collapse: separate; border-spacing: 3px;"> -->
+   	<table>
+        <tr>
+            {section name=i loop=$label}
+            <td style="padding-right: 2px"><a href='{$smarty.const.URL}?mode=1&title={$label[i]}&pref={$pref[i]}'>{$label[i]}</a></td>
+            {/section}
         </tr>
         <tr>
-        <td><button id="fukuoka" name="fukuoka2" />{$label[0]}</button></td>
-        <td><button id="kyushu" name="kyushu2" />{$label[1]}</button></td>
-        <td><button name="chugoku2" />{$label[2]}</button></td>
-        <td><button name="kansai2" />{$label[3]}</button></td>
-        <td><button name="tokai2" />{$label[4]}</button></td>
-        <td><button name="tokyo2" />{$label[5]}</button></td>
-        <td><button name="kanto2" />{$label[6]}</button></td>
-        <td><button name="tohoku2" />{$label[7]}</button></td>
+            {section name=i loop=$label}
+            <td><a href='{$smarty.const.URL}?mode=2&title={$label[i]}&pref={$pref[i]}'>{$label[i]}</a></td>
+            {/section}
         </tr>
+    </table>
+    <!-- <table style="border-collapse: separate; border-spacing: 4px;"> -->
+    <table>
         <tr>
-        <td><button name="go">{$label[8]}</button></td>
-        <td colspan=3>{html_options name=year options=$year_options selected=$year}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <!--<td></td>-->
-        <td><button name="now" />{$label[9]}</button></td>
+            <td style="padding-right: 3px"><a href='{$smarty.const.URL}?mode=2&title=PLAN&plan=2'>PLAN</a></td>
+            {foreach from=$year_options item=year}
+            <td style="padding-right: 3px"><a href='{$smarty.const.URL}?mode=2&title={$year}&year={$year}'>{$year}</a></td>
+            {/foreach}
         </tr>
-        </table>
-</form>
+    </table>
 <BR>
 
 {if $museum != ""}
