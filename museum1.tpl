@@ -26,7 +26,6 @@ function getyear() {
 </head>
 <body>
 <div align=center>
-     <!-- <table style="border-collapse: separate; border-spacing: 3px;"> -->
    	<table>
         <tr>
             {section name=i loop=$label}
@@ -39,7 +38,6 @@ function getyear() {
             {/section}
         </tr>
     </table>
-    <!-- <table style="border-collapse: separate; border-spacing: 4px;"> -->
     <table>
         <tr>
             <td style="padding-right: 3px"><a href='{$smarty.const.URL}?mode=2&title=PLAN&plan=2'>PLAN</a></td>
@@ -50,8 +48,9 @@ function getyear() {
     </table>
 <BR>
 
+<h1>{$title}</h1>
+
 {if $museum != ""}
-    <h1>{$museum[0]}</h1>
     <h3>{$museum[8]}</h3>
     <table>
     <tr><td align=right>Webサイト</td><td><a href="{$museum[7]}" target="_blank">{$museum[7]}</a></td></tr>
@@ -71,10 +70,8 @@ function getyear() {
     <tr><td align=right>年間スケジュール</td><td><a href="{$museum[9]}" target="_blank">{$museum[9]}</a></td></tr>
     <tr><td align=right>備考</td><td>{$museum[6]}</td></tr>
     </table>
-    <br>
 {/if}
-
-<h1>{$title}</h1><br>
+<br>
 
 {*
 {if $year != ""}
@@ -97,17 +94,15 @@ function getyear() {
     {if $row2 != null}
     <tr bgcolor="{cycle values="#FFF0F5,#F0FFFF"}">
     <td align="right">{$smarty.foreach.loop.iteration}</td>
-    <!--<td>{if $row2[10] eq t}☆{/if}</td>-->
     <td align="right">{$row2[18]}</td>
     <td align="left">{if $row2[4] neq ""}{$row2[4]}{else}{if $row2[10] eq t}🔵️{/if}{/if}</td>
     <td><a href='{$smarty.const.URL}?exhibition={$row2[7]}'>{$row2[0]}</a> {if $row2[12] eq t}📕{/if} {if $row2[13] eq t}🎧{/if}</td>
-    <td><a href="{$smarty.const.URL}?museum={$row2[8]}">{$row2[1]}</a></td>
+    <td><a href="{$smarty.const.URL}?museum={$row2[8]}">{if $is_smartphone eq "FALSE"}<nobr>{/if}{$row2[1]}{if $is_smartphone eq "FALSE"}</nobr>{/if}</a></td>
     <td>{if $row2[9] eq t}✅{/if}</td>
-    <td>{$row2[2]}〜{$row2[3]}</td>
-    <!--<td><b>{$row2[4]}</b></td>-->
+    <td>{if $is_smartphone eq "FALSE"}<nobr>{/if}{$row2[2]}〜{$row2[3]}{if $is_smartphone eq "FALSE"}</nobr>{/if}</td>
     <td><b>{$row2[5]} {$row2[15]} {$row2[14]}</b>
     	{if $row2[16] neq null}<a href="{$smarty.const.URL}?expedition={$row2[19]}"><b>
-        {if $row2[20] neq null}{$row2[20]}{else}{$row2[16]}{/if}</b></a>{/if}
+        {if $row2[20] neq null}{$row2[20]}{else}{$row2[16]}{/if}</b></a>{/if} {$row2[21]}
     </td>
     <td>{if $row2[17] neq null}<a href="{$row2[17]}" target="_blank">HP</a>{/if}</td>
     <td>{if $row2[6] neq null}<a href="{$row2[6]}" target="_blank">HP</a>{/if}</td>
@@ -127,7 +122,7 @@ function getyear() {
     <td><a href="{$smarty.const.URL}?museum={$row[0]}">{$row[1]} <!-- <font color="blue">{$row[2]}</font> --></a></td>
     {if $row[21] neq null}
         <td></td>
-        <td colspan=7><b><font color="red">休館中 ({$row[21]}～{$row[22]})</font></b></td>
+        <td colspan=7><b><font color="red">{if $row[22] neq null}休館中 ({$row[21]}～{$row[22]}){else}閉館 ({$row[21]}){/if}</font></b></td>
     {else if $row[10] neq null}
         <td></td>
         <td colspan=7><font color="red">{$row[10]}</font></td>
