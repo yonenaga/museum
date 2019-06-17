@@ -8,8 +8,10 @@
     $smarty->cache_dir = './smarty';
     $smarty->error_reporting = E_ALL & ~E_NOTICE;
 
-    $label = array('福岡','九州','中国','四国','関西','東海','北陸','甲信越','東京','多摩','関東','東北','北海道');
-    $pref = array("40", "41,42,43,44,45,46,47", "31,32,33,34,35", "36,37,38,39", "25,26,27,28,29,30", "21,22,23,24", "16,17,18", "15,19,20", "13", "48", "8,9,10,11,12,14", "2,3,4,5,6,7", "1");
+    // $label = array('福岡','九州','中国','四国','関西','東海','北陸','甲信越','東京','関東','東北','北海道');
+    // $pref = array("40", "41,42,43,44,45,46,47", "31,32,33,34,35", "36,37,38,39", "25,26,27,28,29,30", "21,22,23,24", "16,17,18", "15,19,20", "13", "8,9,10,11,12,14,48", "2,3,4,5,6,7", "1");
+    $label = array('福岡','九州','中国','四国','関西','東海','中部','東京','関東','東北･北海道');
+    $pref = array("40", "41,42,43,44,45,46,47", "31,32,33,34,35", "36,37,38,39", "25,26,27,28,29,30", "21,22,23,24", "16,17,18,15,19,20", "13", "8,9,10,11,12,14,48", "1,2,3,4,5,6,7");
 
     $data = array();
     $exhibit = array();
@@ -25,6 +27,7 @@
 
     $order = "PREF DESC, NAMEK";
     $title = "";
+    $header_title = "";
 
     $year = 2019;
     if (isset($_GET["year"])) $year = $_GET["year"];
@@ -102,7 +105,7 @@
         $select .= "CASE WHEN P.START <= CURRENT_DATE THEN P.END ELSE P.START END AS SORTDAY, ";
 
         //12-18
-        $select .= "E.CATALOG, FALSE, P.REMARKS, E.REMARKS, EP.DESCRIPTION, E.URL";
+        $select .= "E.CATALOG, FALSE, P.REMARKS, E.REMARKS, '', E.URL";
 
         if ($wherestr2 != "") {
             $select .= ", TO_CHAR(VI.DAY, '<b>FMmm/DD</b>') AS VIEWDAY";
@@ -128,7 +131,8 @@
         	$select .= ", ''";
         }
         else {
-	        $select .= ", STRING_AGG(C.NAMEJ, ',' ORDER BY M2.PREF) ";
+	        // $select .= ", STRING_AGG(C.NAMEJ, ',' ORDER BY M2.PREF) ";
+            $select .= ", STRING_AGG(C.NAMEJ, ',' ORDER BY P2.END) ";
     	}
 
         //22
@@ -147,7 +151,7 @@
         	$from .= "LEFT JOIN CITY C ON M2.PREF=C.ID ";
 	    }
 
-        $groupby = "GROUP BY E.NAMEJ, M.NAMEJ, STARTDAY, ENDDAY, A, P.URL, P.EXHIBITION, P.PLACE, M.CHECKED, P.SPECIAL, SORTDAY, E.CATALOG, FALSE, P.REMARKS, E.REMARKS, EP.DESCRIPTION, E.URL, EP.ID, MP.NAMEJ, E.ID, P.TITLEJ_PRE, P.TITLEJ_POST, CI.NAMEJ ";
+        $groupby = "GROUP BY E.NAMEJ, M.NAMEJ, STARTDAY, ENDDAY, A, P.URL, P.EXHIBITION, P.PLACE, M.CHECKED, P.SPECIAL, SORTDAY, E.CATALOG, FALSE, P.REMARKS, E.REMARKS, E.URL, EP.ID, MP.NAMEJ, E.ID, P.TITLEJ_PRE, P.TITLEJ_POST, CI.NAMEJ ";
 
         $sqlstr = $select;
         $sqlstr .= $from;
@@ -156,6 +160,7 @@
         $sqlstr .= $groupby . ", VI.DAY ";
         $sqlstr .= "ORDER BY P.START, P.END, E.ID, VI.DAY";
 
+        //美術館指定
         if (isset($_GET['museum'])) {
         	$museum = array();
             $sqlstr = $select;
@@ -179,7 +184,8 @@
 	        $sqlstr .= "LEFT JOIN MUSEUM_PAST MP ON M.ID=MP.ID AND C.END<=MP.ENDDAY ";
             $sqlstr .= "ORDER BY STARTDAY, ENDDAY, VIEWDAY, EXID";
 
-            $sqlstr2 = "SELECT M.NAMEJ, TO_CHAR(M.OPEN,'HH24:MI'), TO_CHAR(M.CLOSE,'HH24:MI'), A.ABSENCE, M.REDUCT, M.PAYMENT, M.NOTE, M.URL, M.NAMEE, M.SCHEDULE FROM MUSEUM M LEFT JOIN ABSENCE A ON M.ABSENCE=A.ID WHERE M.ID=" . $_GET['museum'] . " ";
+            //美術館概要
+            $sqlstr2 = "SELECT M.NAMEJ, TO_CHAR(M.OPEN,'HH24:MI'), TO_CHAR(M.CLOSE,'HH24:MI'), A.ABSENCE, M.REDUCT, M.PAYMENT, M.NOTE, M.URL, M.NAMEE, M.SCHEDULE, COALESCE(P1.NAME, '―'), COALESCE(P2.NAME, '―'), COALESCE(P3.NAME, '―') FROM MUSEUM M LEFT JOIN ABSENCE A ON M.ABSENCE=A.ID LEFT JOIN PAYMENT P1 ON M.PAY1=P1.ID LEFT JOIN PAYMENT P2 ON M.PAY2=P2.ID LEFT JOIN PAYMENT P3 ON M.PAY3=P3.ID WHERE M.ID=" . $_GET['museum'] . " ";
 
 	        print_r("<!--");
     	    print_r($sqlstr2);
@@ -193,6 +199,7 @@
             }
 
             $title = $museum[0];
+            $header_title = $_GET['museum'] . " " . $museum[0];
         }
 
         if (isset($_GET['exhibition'])) {
@@ -208,6 +215,7 @@
             $sqlstr = $select;
             $sqlstr .= $from;
             $sqlstr .= "WHERE EP.ID=" . $_GET['expedition'] . " ";
+            $sqlstr .= $groupby . ", VI.DAY ";
             $sqlstr .= "ORDER BY P.START, P.END, VI.DAY";
 
             $sqlstr2 = "SELECT HOTEL FROM EXPEDITION WHERE ID=" . $_GET['expedition'] . " ";
@@ -224,7 +232,7 @@
         }
 
         if (isset($_GET['year'])) {
-    	   //print $year;
+    	    // print $year;
             // $select = "SELECT E.NAMEJ";
 	        $select = "SELECT COALESCE(P.TITLEJ_PRE, '') || E.NAMEJ || COALESCE(P.TITLEJ_POST, '') ";
             // $select .= ", COALESCE(MP.NAMEJ, M.NAMEJ)";
@@ -232,7 +240,7 @@
             $select .= ", TO_CHAR(P.START, 'YYYY/MM/DD') AS STARTDAY, TO_CHAR(P.END, 'MM/DD') AS ENDDAY";
             $select .= ", '' AS F";
             $select .= ", '', P.URL, P.EXHIBITION, P.PLACE, FALSE AS A, FALSE AS B, '' AS C, E.CATALOG, VI.GUIDE ";
-            $select .= ", '' AS D, '' AS E, EP.DESCRIPTION, E.URL";
+            $select .= ", '' AS D, '' AS E, '', E.URL";
 
             //18
             $select .= ", STRING_AGG(TO_CHAR(VI.DAY, '<b>FMmm/DD</b>'), '<br>' ORDER BY VI.DAY) AS VIEWDAY";
@@ -252,7 +260,7 @@
             $sqlstr = $select;
             $sqlstr .= $from;
             $sqlstr .= "WHERE VI.DAY>='" . $year ."-01-01' AND VI.DAY<='" . $year . "-12-31' ";
-            $sqlstr .= "GROUP BY E.NAMEJ, M.NAMEJ, STARTDAY, ENDDAY, P.URL, P.EXHIBITION, P.PLACE, E.CATALOG, VI.GUIDE, EP.DESCRIPTION, E.URL, EP.ID, A, B, C, D, E, F, G, VI.ORDER, MP.NAMEJ, P.TITLEJ_PRE, P.TITLEJ_POST, CI.NAMEJ ";
+            $sqlstr .= "GROUP BY E.NAMEJ, M.NAMEJ, STARTDAY, ENDDAY, P.URL, P.EXHIBITION, P.PLACE, E.CATALOG, VI.GUIDE, E.URL, EP.ID, A, B, C, D, E, F, G, VI.ORDER, MP.NAMEJ, P.TITLEJ_PRE, P.TITLEJ_POST, CI.NAMEJ ";
             $sqlstr .= "ORDER BY SORTDAY, VI.ORDER";
             // print_r($sqlstr);
         }
@@ -304,7 +312,9 @@
 
     if (isset($_GET['exhibition'])) {
         $title = $exhibit[0][0];
+        $header_title = $_GET['exhibition'] . " " . $exhibit[0][0];
     }
+
     if (isset($_GET['expedition'])) {
         $title = $exhibit[0][20];
         if ($title == null) $title = $exhibit[0][16];
@@ -315,6 +325,9 @@
     $smarty->assign('wherestr2', $wherestr2);
 
     $smarty->assign('title', $title);
+
+    if ($header_title == "") $header_title = $title;
+    $smarty->assign('header_title', $header_title);
 
     $smarty->display('museum1.tpl');
 ?>

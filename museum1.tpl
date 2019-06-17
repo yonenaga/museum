@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>{if $title != ""}{$title} - MUSEUM{else}MUSEUM{/if}</title>
+    <title>{if $header_title != ""}{$header_title} - MUSEUM{else}MUSEUM{/if}</title>
     <link type="text/css" rel="stylesheet" href="museum.css" />
     <link rel="shortcut icon" href="../favicon.ico" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -53,22 +53,25 @@ function getyear() {
 {if $museum != ""}
     <h3>{$museum[8]}</h3>
     <table>
-    <tr><td align=right>Webサイト</td><td><a href="{$museum[7]}" target="_blank">{$museum[7]}</a></td></tr>
-    <tr><td align=right>開館時間</td><td>{$museum[1]}～{$museum[2]}</td></tr>
-    <tr><td align=right>休館日</td><td>{$museum[3]}</td></tr>
-    <tr><td align=right>割引</td><td>
+    <tr><td align=right>Webサイト　</td><td><a href="{$museum[7]}" target="_blank">{$museum[7]}</a></td></tr>
+    <tr><td align=right>開館時間　</td><td>{$museum[1]}～{$museum[2]}</td></tr>
+    <tr><td align=right>休館日　</td><td>{$museum[3]}</td></tr>
+    <tr><td align=right>割引　</td><td>
 		{if $museum[4] eq "JAF"}<img src="./jaf.png" height=14 alt="JAF" >{elseif $museum[4] eq "交通系IC"}<img src="./ic.gif" height=16 alt="IC" >{else}{$museum[4]}{/if}
 		</td></tr>
-    <tr><td align=right>支払</td><td>
+    {*<tr><td align=right>支払　</td><td>
     {if $museum[5] != null}
     	{if $museum[5] eq "交通系IC"}<img src="./ic.gif" height=16 alt="IC" >
     	{elseif $museum[5] eq "VISA"}<img src="./visa.jpg" height=14 alt="VISA" >
     	{elseif $museum[5] eq "1"}<img src="./visa.jpg" height=14 alt="VISA" > <img src="./master.png" height=16 alt="MasterCard" > <img src="./jcb.gif" height=14 alt="JCB" > <img src="./ic.gif" height=16 alt="IC" >
     	{else}{$museum[5]}{/if}
 	{/if}
-	</td></tr>
-    <tr><td align=right>年間スケジュール</td><td><a href="{$museum[9]}" target="_blank">{$museum[9]}</a></td></tr>
-    <tr><td align=right>備考</td><td>{$museum[6]}</td></tr>
+	</td></tr>*}
+    <tr><td align=right rowspan=3>支払　</td><td>入場料: {$museum[10]}</td></tr>
+    <tr><td>特設グッズ売場: {$museum[11]}</td></tr>
+    <tr><td>ミュージアムショップ: {$museum[12]}</td></tr>
+    <tr><td align=right>年間スケジュール　</td><td><a href="{$museum[9]}" target="_blank">{$museum[9]}</a></td></tr>
+    <tr><td align=right>備考　</td><td>{$museum[6]}</td></tr>
     </table>
 {/if}
 <br>
@@ -101,8 +104,7 @@ function getyear() {
     <td>{if $row2[9] eq t}✅{/if}</td>
     <td>{if $is_smartphone eq "FALSE"}<nobr>{/if}{$row2[2]}〜{$row2[3]}{if $is_smartphone eq "FALSE"}</nobr>{/if}</td>
     <td><b>{$row2[5]} {$row2[15]} {$row2[14]}</b>
-    	{if $row2[16] neq null}<a href="{$smarty.const.URL}?expedition={$row2[19]}"><b>
-        {if $row2[20] neq null}{$row2[20]}{else}{$row2[16]}{/if}</b></a>{/if} {$row2[21]}
+    	{if $expedition eq ""}{if $row2[20] neq null}<a href="{$smarty.const.URL}?expedition={$row2[19]}"><b>{$row2[20]}</b></a>{/if}{/if} {$row2[21]}
     </td>
     <td>{if $row2[17] neq null}<a href="{$row2[17]}" target="_blank">HP</a>{/if}</td>
     <td>{if $row2[6] neq null}<a href="{$row2[6]}" target="_blank">HP</a>{/if}</td>
