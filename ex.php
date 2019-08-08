@@ -1,7 +1,7 @@
 <?PHP
-    require_once('../Smarty-3.1.30/libs/Smarty.class.php');
+    // require_once('../Smarty-3.1.30/libs/Smarty.class.php');
     require 'routine.php';
-    define('URL', 'http://www.hojomasaki.com/museuxm/index.php');
+    define('URL', 'https://www.hojomasaki.com/museuxm/index.php');
 
     $smarty = new Smarty();
 

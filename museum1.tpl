@@ -4,10 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>{if $header_title != ""}{$header_title} - MUSEUM{else}MUSEUM{/if}</title>
     <link type="text/css" rel="stylesheet" href="museum.css" />
-    <!-- <link rel="shortcut icon" href="M.png" /> -->
-    <link rel="apple-touch-icon" href="M.png" />
     <link rel="icon" href="favicon.ico" />
-    {* <link rel="apple-touch-icon" href="favicon.ico" /> *}
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" />
 <script type="text/javascript" >
@@ -45,9 +42,10 @@ function getyear() {
         <tr>
             <td style="padding-right: 3px"><a href='{$smarty.const.URL}?mode=2&title=PLAN&plan=2'>PLAN</a></td>
             <td style="padding-right: 3px"><a href='{$smarty.const.URL}?mode=2&title=NOW&now=2'>NOW</a></td>
+            <td align=center style="padding-right: 3px"><a href='{$smarty.const.URL}?mode=1&title=フランス人がときめいた日本の美術館&fra=1'>FRA</a></td>
             {foreach from=$year_options item=year}
 	            <td style="padding-right: 3px"><a href='{$smarty.const.URL}?mode=2&title={$year}&year={$year}'>{$year}</a></td>
-		        {if $year eq "2011"}</tr><tr>{/if}
+		        {if $year eq "2013"}</tr><tr>{/if}
             {/foreach}
         </tr>
     </table>
@@ -64,14 +62,6 @@ function getyear() {
     <tr><td align=right>割引　</td><td>
 		{if $museum[4] eq "JAF"}<img src="./jaf.png" height=14 alt="JAF" >{elseif $museum[4] eq "交通系IC"}<img src="./ic.gif" height=16 alt="IC" >{else}{$museum[4]}{/if}
 		</td></tr>
-    {*<tr><td align=right>支払　</td><td>
-    {if $museum[5] != null}
-    	{if $museum[5] eq "交通系IC"}<img src="./ic.gif" height=16 alt="IC" >
-    	{elseif $museum[5] eq "VISA"}<img src="./visa.jpg" height=14 alt="VISA" >
-    	{elseif $museum[5] eq "1"}<img src="./visa.jpg" height=14 alt="VISA" > <img src="./master.png" height=16 alt="MasterCard" > <img src="./jcb.gif" height=14 alt="JCB" > <img src="./ic.gif" height=16 alt="IC" >
-    	{else}{$museum[5]}{/if}
-	{/if}
-	</td></tr>*}
     <tr><td align=right rowspan=3>支払　</td><td>入場料: {$museum[10]}</td></tr>
     <tr><td>特設グッズ売場: {$museum[11]}</td></tr>
     <tr><td>ミュージアムショップ: {$museum[12]}</td></tr>
@@ -80,14 +70,6 @@ function getyear() {
     </table>
 {/if}
 <br>
-
-{*
-{if $year != ""}
-    <h1>{$year}</h1>
-    <br>
-{elseif $exhibition != ""}<h1>{$exhibition}</h1><br>
-{/if}
-*}
 
 {if $expedition != ""}
     <table>
@@ -102,7 +84,9 @@ function getyear() {
     {foreach from=$exhibit key=key item=row2 name=loop}
     {if $row2 != null}
     <tr bgcolor="{cycle values="#FFF0F5,#F0FFFF"}">
-    <td align="right">{$smarty.foreach.loop.iteration}</td>
+    {* <td align="right">{$smarty.foreach.loop.iteration}</td> *}
+    <td align="right">{$row2[7]}</td>
+    <td align="right">{$row2[8]}</td>
     {if $title neq "PLAN"}
     	<td align="right">{$row2[18]}</td>
     {/if}
@@ -120,28 +104,29 @@ function getyear() {
     </td>
     <td>{if $row2[17] neq null}<a href="{$row2[17]}" target="_blank">HP</a>{/if}</td>
     <td>{if $row2[6] neq null}<a href="{$row2[6]}" target="_blank">HP</a>{/if}</td>
-    <td align="right">{$row2[7]}</td><td align="right">{$row2[8]}</td>
+    <td align="right">{$smarty.foreach.loop.iteration}</td>
     </tr>
     {/if}
     {/foreach}
     </table>
 {/if}
 
+{* 美術館一覧 *}
 {if $data != ""}
     <table>
     {foreach from=$data key=key item=row name=loop}
     {if $row != null}
     <tr bgcolor="{cycle values="#FFF0F5,#F0FFFF"}"><!-- ,#FFFFCC -->
-    <td align="right">{$smarty.foreach.loop.iteration}</td>
+    {* <td align="right">{$smarty.foreach.loop.iteration}</td> *}
+    <td align="right">{$row[0]}</td>
     <td><a href="{$smarty.const.URL}?museum={$row[0]}">{$row[1]} <!-- <font color="blue">{$row[2]}</font> --></a></td>
+    <td>{if $row[13] eq t}✅{/if}</td>
+    <td>{$row[23]}</td>
     {if $row[21] neq null}
-        <td></td>
         <td colspan=7><b><font color="red">{if $row[22] neq null}休館中 ({$row[21]}～{$row[22]}){else}閉館 ({$row[21]}){/if}</font></b></td>
     {else if $row[10] neq null}
-        <td></td>
         <td colspan=7><font color="red">{$row[10]}</font></td>
     {else}
-        <td>{if $row[13] eq t}✅{/if}</td>
         <td>{$row[3]}〜{$row[4]}
         {if $row[5] neq null}
             ({$row[6]}〜{$row[5]})
@@ -149,20 +134,6 @@ function getyear() {
         </td>
         <td>{$row[7]}</td>
         <!-- <td>{$row[9]}</td> -->
-<!--        <td>{if $row[9] eq "JAF"}<img src="./jaf.png" height=18 alt="JAF" >{elseif $row[9] eq "交通系IC"}<img src="./ic.gif" height=16 alt="IC" >{else}{$row[9]}{/if}</td>
-     <td>
-    	{* {if $row[11] eq "交通系IC"}<img src="./ic.gif" height=16 alt="IC" >
-    	{elseif $row[11] eq "VISA"}<img src="./visa.jpg" height=12 alt="VISA" >
-    	{elseif $row[11] eq "1"}<img src="./visa.jpg" height=12 alt="VISA" > <img src="./master.png" height=16 alt="MasterCard" > <img src="./jcb.gif" height=14 alt="JCB" > <img src="./ic.gif" height=16 alt="IC" >
-    	{else}{$row[11]}{/if} *}
-    </td>
-    <td>
-        {if $row[16] eq "交通系IC"}<img src="./ic.gif" height=16 alt="IC" >
-        {elseif $row[16] eq "VISA"}<img src="./visa.jpg" height=12 alt="VISA" >
-        {elseif $row[16] eq "1"}<img src="./visa.jpg" height=12 alt="VISA" > <img src="./master.png" height=16 alt="MasterCard" > <img src="./jcb.gif" height=14 alt="JCB" > <img src="./ic.gif" height=16 alt="IC" >
-        {else}{$row[16]}{/if}
-    </td>
- -->
  	    <td>{$row[20]}</td>
  	    <td>{$row[17]}</td>
 	    <td>{$row[18]}</td>
@@ -173,7 +144,7 @@ function getyear() {
     <!-- <td>{if $is_smartphone eq t} <a href="comgooglemaps://?q={$row[1]}">MAP</a>{else} <a href="http://www.google.co.jp/maps?q={$row[1]}" target="_blank">MAP</a>{/if}</td> -->
     <td>{if $row[15] neq null}<a href="{$row[15]}" target="_blank"><font color="green">SCH</font>{/if}</td>
     <td>{if $row[14] neq null}<a href="{$row[14]}" target="_blank">MAP</a>{/if}</td>
-    <td align="right">{$row[0]}</td>
+    {* <td align="right">{$row[0]}</td> *}
     </tr>
     {/if}{/foreach}
     </table>

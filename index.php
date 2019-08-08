@@ -1,5 +1,6 @@
 <?php
     require 'routine.php';
+    define('URL', 'https://www.hojomasaki.com/museuxm/index.php');
 
     $smarty = new Smarty();
     $smarty->template_dir = '.';
@@ -44,12 +45,20 @@
     	//美術館一覧
         $sqlstr = "SELECT M.ID";
         // $sqlstr .= ", NAMEJ";
+        //1
         $sqlstr .= ", CASE WHEN CI.NAMEJ IS NULL THEN M.NAMEJ ELSE M.NAMEJ || ' (' || CI.NAMEJ || ')' END ";
 
-        $sqlstr .= ", NAMEE, TO_CHAR(OPEN,'HH24:MI'), TO_CHAR(CLOSE,'HH24:MI'), TO_CHAR(CLOSEEX,'HH24:MI'), E.PATTERN, A.ABSENCE, URL, REDUCT, '', '', NOTE, CHECKED, MAP, SCHEDULE, '', P1.TAG, P2.TAG, P3.TAG, P4.TAG, TO_CHAR(C.START,'YYYY/MM/DD'), TO_CHAR(C.END,'YYYY/MM/DD') ";
+        //2
+        $sqlstr .= ", NAMEE, TO_CHAR(OPEN,'HH24:MI'), TO_CHAR(CLOSE,'HH24:MI'), TO_CHAR(CLOSEEX,'HH24:MI'), E.PATTERN, A.ABSENCE, URL, REDUCT, '', '', NOTE, CHECKED, MAP, SCHEDULE, '', P1.TAG, P2.TAG, P3.TAG, P4.TAG, TO_CHAR(C.START,'YYYY/MM/DD'), TO_CHAR(C.END,'YYYY/MM/DD'), CP.NAMEJ ";
         $sqlstr .= "FROM MUSEUM M LEFT JOIN ABSENCE A ON M.ABSENCE=A.ID LEFT JOIN EXPATTERN E ON M.EXPATTERN=E.ID LEFT JOIN PAYMENT P1 ON M.PAY1=P1.ID LEFT JOIN PAYMENT P2 ON M.PAY2=P2.ID LEFT JOIN PAYMENT P3 ON M.PAY3=P3.ID LEFT JOIN PAYMENT P4 ON M.REDUCT=P4.NAME LEFT JOIN CLOSE C ON M.ID=C.ID AND C.START<=CURRENT_DATE AND (C.END>=CURRENT_DATE OR C.END IS NULL) ";
         $sqlstr .= "LEFT JOIN CITY CI ON M.CITY=CI.ID ";
-        $sqlstr .= "WHERE " . $wherestr . " AND M.DISABLE=FALSE ORDER BY " . $order;
+        $sqlstr .= "LEFT JOIN CITY CP ON M.PREF=CP.ID ";
+        if (isset($_GET['fra'])) {
+            $sqlstr .= "WHERE M.NOTE LIKE '%フランス人がときめいた日本の美術館%' ORDER BY M.NOTE";
+        }
+        else {
+            $sqlstr .= "WHERE " . $wherestr . " AND M.DISABLE=FALSE ORDER BY " . $order;
+        }
 
         print_r("<!--\n");
         print_r($sqlstr);
@@ -60,7 +69,7 @@
         $i = 0;
         while (($row = pg_fetch_array($result, NULL, PGSQL_NUM)) != NULL) {
 			for ($j = 0, $k = 0; $j < count($row); $j++, $k++) {
-                $data[$i][$j] = $row[$k];
+                $data[$i][$j] = replace($row[$k]);
             }
 
             $i++;
@@ -103,7 +112,8 @@
 	        $select .= "WHEN P.START<=CURRENT_DATE AND P.END >= CURRENT_DATE THEN '<font color=\"red\">開催中</font>' ";
     	}
         $select .= "WHEN P.END<CURRENT_DATE THEN '<font color=\"gray\">終了</font>' ";
-        $select .= "WHEN (P.START - 14) <= CURRENT_DATE THEN '<font color=\"black\">開幕まであと' || (P.START - CURRENT_DATE) || '日</font>' ";
+        $select .= "WHEN (P.START - 14) < CURRENT_DATE THEN '<font color=\"black\">開幕まであと' || (P.START - CURRENT_DATE) || '日</font>' ";
+        $select .= "WHEN P.START = CURRENT_DATE THEN '<font color=\"red\">本日開幕</font>' ";
         $select .= "ELSE '' END AS A, ";
 
         //6,7,8,9,10
@@ -203,7 +213,7 @@
 
             while (($row = pg_fetch_array($result, NULL, PGSQL_NUM)) != NULL) {
                 for ($j = 0, $k = 0; $j < count($row); $j++, $k++) {
-                    $museum[$j] = $row[$k];
+                    $museum[$j] = replace($row[$k]);
                 }
             }
 
@@ -324,7 +334,7 @@
     // $smarty->assign('msg', $msg);
     $smarty->assign('dbver', dbversion($conn));
     $smarty->assign('is_smartphone', $is);
-    $smarty->assign('year_options', array(2019=>'2019',2018=>'2018',2017=>'2017',2016=>'2016',2015=>'2015',2014=>'2014',2013=>'2013',2011=>'2011',2009=>'2009',2006=>'2006',2005=>'2005'));
+    $smarty->assign('year_options', array(2019=>'2019',2018=>'2018',2017=>'2017',2016=>'2016',2015=>'2015',2014=>'2014',2013=>'2013',2012=>'2012',2011=>'2011',2010=>'2010',2009=>'2009',2008=>'2008',2007=>'2007',2006=>'2006',2005=>'2005'));
     // $smarty->assign('museum_options', array("PREF=1"=>'北海道',"PREF>=2 AND PREF<=7"=>'東北',"PREF>=15 AND PREF<=20"=>'北陸・甲信越',"PREF>=36 AND PREF<=39"=>'四国'));
 
 	$smarty->assign('label', $label);
@@ -350,4 +360,10 @@
     $smarty->assign('header_title', $header_title);
 
     $smarty->display('museum1.tpl');
+
+    function replace($text) {
+        // $text = str_replace("フランス人がときめいた日本の美術館", "<a href='https://www.bs11.jp/education/sp/japanese-museums/' target='_blank'>フランス人がときめいた日本の美術館</a>", $text);
+        $text = str_replace("フランス人がときめいた日本の美術館", "<a href='" . URL . "?mode=1&title=フランス人がときめいた日本の美術館&fra=1' target='_blank'>フランス人がときめいた日本の美術館</a>", $text);
+        return $text;
+    }
 ?>
