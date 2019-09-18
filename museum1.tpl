@@ -29,22 +29,22 @@ function getyear() {
    	<table>
         <tr>
             {section name=i loop=$label}
-            <td style="padding-right: 2px"><a href='{$smarty.const.URL}?mode=1&title={$label[i]}&pref={$pref[i]}'>{$label[i]}</a></td>
+            <td style="padding-right: 2px"><a href='{$URL}?mode=1&title={$label[i]}&pref={$pref[i]}'>{$label[i]}</a></td>
             {/section}
         </tr>
         <tr>
             {section name=i loop=$label}
-            <td><a href='{$smarty.const.URL}?mode=2&title={$label[i]}&pref={$pref[i]}'>{$label[i]}</a></td>
+            <td><a href='{$URL}?mode=2&title={$label[i]}&pref={$pref[i]}'>{$label[i]}</a></td>
             {/section}
         </tr>
     </table>
     <table>
         <tr>
-            <td style="padding-right: 3px"><a href='{$smarty.const.URL}?mode=2&title=PLAN&plan=2'>PLAN</a></td>
-            <td style="padding-right: 3px"><a href='{$smarty.const.URL}?mode=2&title=NOW&now=2'>NOW</a></td>
-            <td align=center style="padding-right: 3px"><a href='{$smarty.const.URL}?mode=1&title=フランス人がときめいた日本の美術館&fra=1'>FRA</a></td>
+            <td style="padding-right: 3px"><a href='{$URL}?mode=2&title=PLAN&plan=2'>PLAN</a></td>
+            <td style="padding-right: 3px"><a href='{$URL}?mode=2&title=NOW&now=2'>NOW</a></td>
+            <td align=center style="padding-right: 3px"><a href='{$URL}?mode=1&title=フランス人がときめいた日本の美術館&fra=1'>FRA</a></td>
             {foreach from=$year_options item=year}
-	            <td style="padding-right: 3px"><a href='{$smarty.const.URL}?mode=2&title={$year}&year={$year}'>{$year}</a></td>
+	            <td style="padding-right: 3px"><a href='{$URL}?mode=2&title={$year}&year={$year}'>{$year}</a></td>
 		        {if $year eq "2013"}</tr><tr>{/if}
             {/foreach}
         </tr>
@@ -93,14 +93,14 @@ function getyear() {
     {if $year eq null}
    		<td align="left">{if $row2[4] neq ""}{$row2[4]}{else}{if $title neq "PLAN"}{if $row2[10] eq t}🔵️{/if}{/if}{/if}</td>
    	{/if}
-    <td><a href='{$smarty.const.URL}?exhibition={$row2[7]}'>{$row2[0]}</a> {if $row2[12] eq t}📕{/if} {if $row2[13] eq t}🎧{/if}</td>
-    <td><a href="{$smarty.const.URL}?museum={$row2[8]}">{if $is_smartphone eq "FALSE"}<nobr>{/if}{$row2[1]}{if $is_smartphone eq "FALSE"}</nobr>{/if}</a></td>
+    <td><a href='{$URL}?exhibition={$row2[7]}'>{$row2[0]}</a> {if $row2[12] eq t}📕{/if} {if $row2[13] eq t}🎧{/if}</td>
+    <td><a href="{$URL}?museum={$row2[8]}">{if $is_smartphone eq "FALSE"}<nobr>{/if}{$row2[1]}{if $is_smartphone eq "FALSE"}</nobr>{/if}</a></td>
     {if $year eq null}
     	<td>{if $row2[9] eq t}✅{/if}</td>
     {/if}
-    <td>{if $is_smartphone eq "FALSE"}<nobr>{/if}{$row2[2]}〜{$row2[3]}{if $is_smartphone eq "FALSE"}</nobr>{/if}</td>
+    <td>{if $is_smartphone eq "FALSE"}<nobr>{/if}{$row2[2]}{if $row2[2] neq null}〜{/if}{$row2[3]}{if $is_smartphone eq "FALSE"}</nobr>{/if}</td>
     <td><b>{$row2[5]} {$row2[15]} {$row2[14]}</b>
-    	{if $expedition eq ""}{if $row2[20] neq null}<a href="{$smarty.const.URL}?expedition={$row2[19]}"><b>{$row2[20]}</b></a>{/if}{/if} {$row2[21]}
+    	{if $expedition eq ""}{if $row2[20] neq null}<a href="{$URL}?expedition={$row2[19]}"><b>{$row2[20]}</b></a>{/if}{/if} {$row2[21]}
     </td>
     <td>{if $row2[17] neq null}<a href="{$row2[17]}" target="_blank">HP</a>{/if}</td>
     <td>{if $row2[6] neq null}<a href="{$row2[6]}" target="_blank">HP</a>{/if}</td>
@@ -119,7 +119,7 @@ function getyear() {
     <tr bgcolor="{cycle values="#FFF0F5,#F0FFFF"}"><!-- ,#FFFFCC -->
     {* <td align="right">{$smarty.foreach.loop.iteration}</td> *}
     <td align="right">{$row[0]}</td>
-    <td><a href="{$smarty.const.URL}?museum={$row[0]}">{$row[1]} <!-- <font color="blue">{$row[2]}</font> --></a></td>
+    <td><a href="{$URL}?museum={$row[0]}">{$row[1]} <!-- <font color="blue">{$row[2]}</font> --></a></td>
     <td>{if $row[13] eq t}✅{/if}</td>
     <td>{$row[23]}</td>
     {if $row[21] neq null}
