@@ -193,8 +193,8 @@
         $sqlstr .= "WHERE " . $wherestr . " ";
         $sqlstr .= "AND P.END>=CURRENT_DATE ";
         $sqlstr .= $groupby;
-        $sqlstr .= ", VI.DAY ";
-        $sqlstr .= "ORDER BY P.START, P.END, E.ID, VI.DAY";
+        // $sqlstr .= ", VI.DAY ";
+        $sqlstr .= "ORDER BY P.START, P.END, E.ID";
 
         //美術館指定
         if (isset($_GET['museum'])) {
@@ -252,7 +252,7 @@
             $sqlstr = $select;
             $sqlstr .= $from;
             $sqlstr .= "WHERE EP.ID=" . $_GET['expedition'] . " ";
-            $sqlstr .= $groupby . ", VI.DAY, VI.ORDER ";
+            $sqlstr .= $groupby . ", VI.DAY ";
             $sqlstr .= "ORDER BY VI.DAY, VI.ORDER, P.START, P.END";
 
             $sqlstr2 = "SELECT HOTEL FROM EXPEDITION WHERE ID=" . $_GET['expedition'] . " ";
@@ -293,13 +293,13 @@
 
             //21
             $select .= ", '' ";
-            $select .= ", MIN(VI.DAY) AS SORTDAY ";
+            $select .= ", MIN(TO_CHAR(VI.DAY, 'YYYYMMDD') || VI.ORDER) AS SORTDAY ";
 
             $sqlstr = $select;
             $sqlstr .= $from;
             $sqlstr .= "WHERE VI.DAY>='" . $year ."-01-01' AND VI.DAY<='" . $year . "-12-31' ";
-            $sqlstr .= "GROUP BY E.NAMEJ, M.NAMEJ, STARTDAY, ENDDAY, P.URL, P.EXHIBITION, P.PLACE, E.CATALOG, VI.GUIDE, E.URL, EP.ID, VI.ORDER, MP.NAMEJ, P.TITLEJ_PRE, P.TITLEJ_POST, CI.NAMEJ ";
-            $sqlstr .= "ORDER BY SORTDAY, VI.ORDER";
+            $sqlstr .= "GROUP BY E.NAMEJ, M.NAMEJ, STARTDAY, ENDDAY, P.URL, P.EXHIBITION, P.PLACE, E.CATALOG, VI.GUIDE, E.URL, EP.ID, MP.NAMEJ, P.TITLEJ_PRE, P.TITLEJ_POST, CI.NAMEJ ";
+            $sqlstr .= "ORDER BY SORTDAY";
             // print_r($sqlstr);
         }
 
@@ -318,8 +318,8 @@
             $sqlstr .= $from;
             $sqlstr .= "WHERE P.START<=CURRENT_DATE AND P.END>=CURRENT_DATE ";
             // $sqlstr .= "AND NOT EXISTS (SELECT NULL FROM VIEW V WHERE P.EXHIBITION=V.EXHIBITION AND P.PLACE=V.PLACE) ";
-            $sqlstr .= $groupby . ", VI.DAY ";
-            $sqlstr .= "ORDER BY P.START, P.END, E.ID, VI.DAY";
+            $sqlstr .= $groupby;
+            $sqlstr .= "ORDER BY P.START, P.END, E.ID";
         }
 
         print_r("<!--\n");
@@ -377,7 +377,7 @@
     $smarty->assign('header_title', $header_title);
     $smarty->assign('URL', $URL);
 
-    $smarty->display('museum1.tpl');
+    $smarty->display('museum2.tpl');
 
     function replace($text) {
         // $text = str_replace("フランス人がときめいた日本の美術館", "<a href='https://www.bs11.jp/education/sp/japanese-museums/' target='_blank'>フランス人がときめいた日本の美術館</a>", $text);
