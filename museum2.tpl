@@ -3,7 +3,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>{if $header_title != ""}{$header_title} - MUSEUM{else}MUSEUM{/if}</title>
-    <link rel="icon" href="favicon.ico" />
+    <link rel="icon" href="http://www.yonenagashinichiro.com/museuxm/favicon.ico" />
+    <link rel="apple-touch-icon" href="http://www.yonenagashinichiro.com/museuxm/apple-touch-icon.png">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link type="text/css" rel="stylesheet" href="museum.css" />
@@ -30,8 +31,12 @@ function getyear() {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark mt-3 mb-3  justify-content-center">
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark mt-3 mb-3  justify-content-center {* sticky-top *}">
+	{* <div class="navbar-header"> *}
 	<ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href='{$URL}?mode=2&title=PLAN&plan=2'>PLAN</a>
+        </li>
 		<li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">MUSEUM</a>
 			<div class="dropdown-menu">
@@ -57,9 +62,6 @@ function getyear() {
 			</div>
 		</li>
         <li class="nav-item">
-            <a class="nav-link" href='{$URL}?mode=2&title=PLAN&plan=2'>PLAN</a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link" href='{$URL}?mode=2&title=NOW&now=2'>NOW</a>
         </li>
         <li class="nav-item">
@@ -71,7 +73,17 @@ function getyear() {
         <li class="nav-item">
             <a class="nav-link" href="http://www.museum.or.jp/modules/jyunkai/" target="_blank">Internet Museum</a>
         </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">SITE</a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href='http://www.bs4.jp/burabi/' target="_blank">ぶらぶら美術・博物館</a>
+                <a class="dropdown-item" href='https://www.bs11.jp/education/sp/japanese-museums/' target="_blank">フランス人がときめいた日本の美術館</a>
+                <a class="dropdown-item" href='https://www.tomosha.com/mado/' target="_blank">美術の窓</a>
+
+            </div>
+        </li>
 	</ul>
+{* </div> *}
 </nav>
 
 <div align=center>

@@ -13,8 +13,8 @@
 
     // $label = array('福岡','九州','中国','四国','関西','東海','北陸','甲信越','東京','関東','東北','北海道');
     // $pref = array("40", "41,42,43,44,45,46,47", "31,32,33,34,35", "36,37,38,39", "25,26,27,28,29,30", "21,22,23,24", "16,17,18", "15,19,20", "13", "8,9,10,11,12,14,48", "2,3,4,5,6,7", "1");
-    $label = array('福岡','九州','中国','四国','関西','東海','北陸甲信越','東京','関東','東北･北海道');
-    $pref = array("40", "41,42,43,44,45,46,47", "31,32,33,34,35", "36,37,38,39", "25,26,27,28,29,30", "21,22,23,24", "16,17,18,15,19,20", "13", "8,9,10,11,12,14", "1,2,3,4,5,6,7");
+    $label = array('福岡','九州','広島・山口','中国','四国','京都','関西','東海','北陸・甲信越','東京 (あ～て)','東京 (と～わ)','関東','東北・北海道');
+    $pref = array("40", "41,42,43,44,45,46,47", "34,35","31,32,33", "36,37,38,39", "26", "25,27,28,29,30", "21,22,23,24", "16,17,18,15,19,20", "131", "132","8,9,10,11,12,14", "1,2,3,4,5,6,7");
 
     $data = array();
     $exhibit = array();
@@ -41,8 +41,11 @@
 
     if (isset($_GET['pref'])) {
     	$wherestr = "(M.PREF IN (" . $_GET['pref'] .")";
-        if (strpos($_GET['pref'], "13") !== FALSE) {
-            $wherestr .= " AND (M.CITY IS NULL OR M.CITY<13200))";
+        if (strpos($_GET['pref'], "131") !== FALSE) {
+            $wherestr = " (M.PREF IN (13) AND (M.CITY IS NULL OR M.CITY<13200) AND M.NAMEK<'と')";
+        }
+        else if (strpos($_GET['pref'], "132") !== FALSE) {
+            $wherestr = " (M.PREF IN (13) AND (M.CITY IS NULL OR M.CITY<13200) AND M.NAMEK>='と')";
         }
         else if (strpos($_GET['pref'], "14") !== FALSE) {
             $wherestr .= " OR (M.PREF=13 AND M.CITY>=13200))";
@@ -319,7 +322,7 @@
             $sqlstr .= "WHERE P.START<=CURRENT_DATE AND P.END>=CURRENT_DATE ";
             // $sqlstr .= "AND NOT EXISTS (SELECT NULL FROM VIEW V WHERE P.EXHIBITION=V.EXHIBITION AND P.PLACE=V.PLACE) ";
             $sqlstr .= $groupby;
-            $sqlstr .= "ORDER BY P.START, P.END, E.ID";
+            $sqlstr .= "ORDER BY P.END, P.START, E.ID";
         }
 
         print_r("<!--\n");
@@ -381,7 +384,7 @@
 
     function replace($text) {
         // $text = str_replace("フランス人がときめいた日本の美術館", "<a href='https://www.bs11.jp/education/sp/japanese-museums/' target='_blank'>フランス人がときめいた日本の美術館</a>", $text);
-        $text = str_replace("フランス人がときめいた日本の美術館", "<a href='" . URL . "?mode=1&title=フランス人がときめいた日本の美術館&fra=1' target='_blank'>フランス人がときめいた日本の美術館</a>", $text);
+        $text = str_replace("フランス人がときめいた日本の美術館", "<a href='" . $URL . "?mode=1&title=フランス人がときめいた日本の美術館&fra=1' target='_blank'>フランス人がときめいた日本の美術館</a>", $text);
         return $text;
     }
 ?>
